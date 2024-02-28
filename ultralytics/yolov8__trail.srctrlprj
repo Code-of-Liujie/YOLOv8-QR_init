@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+    <source_groups>
+        <source_group_1a22aaa9-3c0e-4aef-a447-f736f3f1d2cf>
+            <name>Python Source Group</name>
+            <python_environment_path>D:/Anaconda</python_environment_path>
+            <source_extensions>
+                <source_extension>.py</source_extension>
+            </source_extensions>
+            <source_paths>
+                <source_path>models/yolo/detect/train.py</source_path>
+                <source_path>data/loaders.py</source_path>
+            </source_paths>
+            <status>enabled</status>
+            <type>Python Source Group</type>
+        </source_group_1a22aaa9-3c0e-4aef-a447-f736f3f1d2cf>
+    </source_groups>
+    <version>8</version>
+</config>

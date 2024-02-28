@@ -1,0 +1,115 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license
+# Default training settings and hyperparameters for medium-augmentation COCO training
+
+task: detect  # (str) YOLO task, i.e. detect, segment, classify, pose
+mode: train  # (str) YOLO mode, i.e. train, val, predict, export, track, benchmark
+
+# Train settings -------------------------------------------------------------------------------------------------------
+model: E:\DCNV3\ultralytics-main\ultralytics\cfg\models\v8\yolov8.yaml # (str, optional) path to model file, i.e. yolov8n.pt, yolov8n.yaml
+data:  E:\\DCNV3\\ultralytics-main\\ultralytics\\cfg\\datasets\\coco128.yaml # (str, optional) path to data file, i.e. coco128.yaml
+epochs: 100  # (int) number of epochs to train for
+patience: 50  # (int) 早停训练观察的轮次，默认50，如果50轮没有精度提升，模型会直接停止训练
+batch: 16  # (int) number of images per batch (-1 for AutoBatch)
+imgsz: 640  # (int | list) input images size as int for train and val modes, or list[w,h] for predict and export modes
+save: True  # (bool) save train checkpoints and predict results保存训练过程和训练权重，默认开启
+save_period: -1 # (int) 训练过程中每x个轮次保存一次训练模型，默认-1（不开启）。
+cache: False  # (bool) 是否采用ram进行数据载入，设置True会加快训练速度，但是这个参数非常吃内存，一般服务器才会设置
+device: 0 # (int | str | list, optional) device to run on, i.e. cuda device=0 or device=0,1,2,3 or device=cpu
+workers: 0  # (int) 载入数据的线程数。windows一般为4，服务器可以大点，windows上这个参数可能会导致线程报错，发现有关线程报错，可以尝试减少这个参数，这个参数默认为8，大部分都是需要减少的
+project:  # (str, optional) 项目文件夹的名，默认为runs
+name:  # (str, optional) 用于保存训练文件夹名，默认exp，依次累加
+exist_ok: False  # (bool) 是否覆盖现有保存文件夹，默认Flase
+pretrained: False  # (bool | str)是否加载预训练权重，默认Flase
+optimizer: SGD  # (str) optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]
+verbose: True  # (bool) 是否打印详细输出
+seed: 42  # (int) 随机种子，用于复现模型，默认0
+deterministic: True  # (bool) 设置为True，保证实验的可复现性
+single_cls: False  # (bool) 将多类数据训练为单类，把所有数据当作单类训练，默认Flase
+rect: False  # (bool) 使用矩形训练，和矩形推理同理，默认False
+cos_lr:   True  # (bool) 使用余弦学习率调度，默认Flase
+close_mosaic: 10  # (int) 最后x个轮次禁用马赛克增强，默认10
+resume: #True # (bool) 断点训练，默认Flase
+amp: False #True  # (bool) 是否使用自动混合精度（Automatic Mixed Precision，AMP）训练。AMP 是一种深度学习训练技术，利用半精度浮点数加速训练过程，可以减少显存占用。
+fraction: 1.0  # (float) dataset fraction to train on (default is 1.0, all images in train set)
+profile: False  # (bool) profile ONNX and TensorRT speeds during training for loggers
+# Segmentation
+overlap_mask: True  # (bool) masks should overlap during training (segment train only)
+mask_ratio: 4  # (int) mask downsample ratio (segment train only)
+# Classification
+dropout: 0.0  # (float) 使用dropout正则化(仅对训练进行分类)，默认0.0
+
+# Val/Test settings ----------------------------------------------------------------------------------------------------
+val: True  # (bool) 是否在训练过程中进行验证/测试。如果设置为 True，将在训练过程中进行验证或测试，以评估模型的性能。
+split: val  # (str) 数据集分割用于验证，即val、 test、train，默认val
+save_json: False  # (bool) 将结果保存到 JSON 文件
+save_hybrid: False  # (bool) 保存标签的混合版本（标签+附加预测）
+conf:  # 目标检测的对象置信度阈值。只有置信度高于此阈值的对象才会被检测出来。默认值为0.25
+iou: 0.7  # 非极大值抑制（NMS）的交并比（IoU）阈值。用于在重叠较大的候选框中选择最佳的检测结果。默认值为0.7
+max_det: 300  # 每张图像的最大检测数。如果检测到的对象数超过此值，将保留置信度高低来保留。默认值为300
+half: False  # 是否使用半精度（FP16）进行推理。半精度可以减少计算量，但可能会牺牲一些精度。默认值为False
+dnn: False  # (bool) 使用 OpenCV DNN 进行 ONNX 推理
+plots: True  # (bool) 在训练期间显示图片
+
+# Prediction settings --------------------------------------------------------------------------------------------------
+source:  # 输入源的目录，可以是图像或视频文件
+show: False  # 是否显示检测结果。如果设置为True，则会在屏幕上显示检测到的对象。默认值为False。
+save_txt: False  # 是否将检测结果保存为文本文件（.txt）。默认值为False。
+save_conf: False  # 是否将检测结果与置信度分数一起保存。默认值为False。
+save_crop: False  # 是否保存裁剪后的带有检测结果的图像。默认值为False。
+show_labels: True  # (bool) show object labels in plots是否显示标签。如果设置为True，则在显示检测结果时显示对象标签。默认值为true。
+show_conf: True  # (bool) 是否显示置信度分数。如果设置为True，则在显示检测结果时显示置信度分数。默认值为true。
+vid_stride: 1  # (int) video frame-rate stride视频帧率步长。默认值为False，表示使用默认的帧率
+line_width:   # (int, optional) line width of the bounding boxes, auto if missing边界框的线宽。如果设置为None，则根据图像大小进行自动缩放。默认值为None
+visualize: False  # (bool) 是否可视化模型特征。默认值为False
+augment: False  # (bool) 是否对预测源应用图像增强。默认值为False
+agnostic_nms: False  # (bool) 是否使用类别无关的NMS。默认值为False。
+classes:
+# (int | list[int], optional) 按类别过滤结果。可以指定单个类别（例如class=0）或多个类别（例如class=[0,2,3]）。默认值为None，表示不进行类别过滤。
+retina_masks: False  # (bool) 是否使用高分辨率的分割掩膜。默认值为False
+boxes: True  # (bool)在分割预测中显示边界框。默认值为True。
+
+# Export settings ------------------------------------------------------------------------------------------------------
+format: torchscript  # 导出的格式，默认’torchscript’，可选如上支持的格式 onnx、engine、openvino(str) format to export to, choices at https://docs.ultralytics.com/modes/export/#export-formats
+keras: False  #使用Keras导出TF SavedModel ，用于部署tensorflow模型，默认False (bool) use Kera=s
+optimize: False  # 是否针对移动端对TorchScript进行优化(bool) TorchScript: optimize for mobile
+int8: False  #int8量化导出，默认False (bool) CoreML/TF INT8 quantization
+dynamic: False  # (bool) 针对ONNX/TF/TensorRT:动态推理，默认False
+simplify: False  # (bool) onnx simplify简化，默认False
+opset:  # (int, optional) onnx的Opset版本(可选，默认为最新)
+workspace: 4  # (int) 工作空间大小(GB)，默认4
+nms: False  # (bool) 导出CoreML，添加NMS
+
+# Hyperparameters ------------------------------------------------------------------------------------------------------
+lr0: 0.01  # (float) 初始化学习率，默认0.01
+lrf: 0.01  # (float) final learning rate (lr0 * lrf)最终学习率，默认0.01
+momentum: 0.937  # (float) SGD 优化器的动量/Adam 优化器的 beta1。动量是一种加速梯度下降过程的技术，用于增加参数更新的稳定性。
+weight_decay: 0.0005  # (float) 权重衰减是一种正则化技术，用于减小模型复杂度，防止过拟合
+warmup_epochs: 3.0  # (float) 热身阶段的轮数。热身阶段是训练过程中初始阶段的一部分，在此阶段内，学习率和动量等参数逐渐增加，以帮助模型更好地适应训练数据。
+warmup_momentum: 0.8  # (float) 热身阶段的初始动量。在热身阶段开始时，动量的初始值。
+warmup_bias_lr: 0.1  # (float) 热身阶段的初始偏置学习率。在热身阶段开始时，偏置学习率的初始值
+box: 7.5  # (float) 边界框损失权重。用于调整边界框损失的权重，以控制其在总损失中的贡献程度
+cls: 0.5  # (float) 类别损失权重。用于调整类别损失的权重，以控制其在总损失中的贡献程度（按像素进行缩放）
+dfl: 1.5  # (float) 损失权重。用于调整 DFL 损失的权重，以控制其在总损失中的贡献程度。
+pose: 12.0  # (float) pose loss gain
+kobj: 1.0  # (float) keypoint obj loss gain
+label_smoothing: 0.0  # (float) 标签平滑参数，默认0.0，标签平滑（label smoothing）。标签平滑是一种正则化技术，用于减少模型对训练数据的过拟合程度。
+nbs: 64  # (int) nominal batch size标准批次大小（nominal batch size）。指定训练过程中每个批次的大小
+hsv_h: 0.015  # (float) image HSV-Hue augmentation (fraction)
+hsv_s: 0.7  # (float) image HSV-Saturation augmentation (fraction)
+hsv_v: 0.4  # (float) image HSV-Value augmentation (fraction)
+degrees: 0.0  # (float) image rotation (+/- deg)
+translate: 0.1  # (float) image translation (+/- fraction)
+scale: 0.5  # (float) image scale (+/- gain)
+shear: 0.0  # (float) image shear (+/- deg)
+perspective: 0.0  # (float) image perspective (+/- fraction), range 0-0.001
+flipud: 0.0  # (float) image flip up-down (probability)
+fliplr: 0.5  # (float) image flip left-right (probability)
+mosaic: 1.0  # (float) image mosaic (probability)
+mixup: 0.0  # (float) image mixup (probability)
+copy_paste: 0.0  # (float) segment copy-paste (probability)
+
+# Custom config.yaml ---------------------------------------------------------------------------------------------------
+cfg:  # (str, optional) for overriding defaults.yaml
+
+# Tracker settings ------------------------------------------------------------------------------------------------------
+tracker: botsort.yaml  # (str) tracker type, choices=[botsort.yaml, bytetrack

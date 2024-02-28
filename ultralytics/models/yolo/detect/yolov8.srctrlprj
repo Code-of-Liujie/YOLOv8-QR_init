@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+    <source_groups>
+        <source_group_16caf861-f334-46c2-a776-15fe43b39f7d>
+            <name>Python Source Group</name>
+            <source_extensions>
+                <source_extension>.py</source_extension>
+            </source_extensions>
+            <source_paths>
+                <source_path>train.py</source_path>
+            </source_paths>
+            <status>enabled</status>
+            <type>Python Source Group</type>
+        </source_group_16caf861-f334-46c2-a776-15fe43b39f7d>
+        <source_group_71569021-63bb-4273-b300-21d8a9576c85>
+            <name>Python Source Group</name>
+            <source_extensions>
+                <source_extension>.py</source_extension>
+            </source_extensions>
+            <source_paths>
+                <source_path>train.py</source_path>
+            </source_paths>
+            <status>enabled</status>
+            <type>Python Source Group</type>
+        </source_group_71569021-63bb-4273-b300-21d8a9576c85>
+    </source_groups>
+    <version>8</version>
+</config>

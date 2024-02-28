@@ -1,0 +1,94 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license
+# Builds ultralytics/ultralytics:latest images on DockerHub https://hub.docker.com/r/ultralytics
+
+name: Publish Docker Images
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dockerfile:
+        type: choice
+        description: Select Dockerfile
+        options:
+          - Dockerfile-arm64
+          - Dockerfile-jetson
+          - Dockerfile-python
+          - Dockerfile-cpu
+          - Dockerfile
+      push:
+        type: boolean
+        description: Push image to Docker Hub
+        default: true
+
+jobs:
+  docker:
+    if: github.repository == 'ultralytics/ultralytics'
+    name: Push
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        include:
+          - dockerfile: "Dockerfile-arm64"
+            tags: "latest-arm64"
+            platforms: "linux/arm64"
+          - dockerfile: "Dockerfile-jetson"
+            tags: "latest-jetson"
+            platforms: "linux/arm64"
+          - dockerfile: "Dockerfile-python"
+            tags: "latest-python"
+            platforms: "linux/amd64"
+          - dockerfile: "Dockerfile-cpu"
+            tags: "latest-cpu"
+            platforms: "linux/amd64"
+          - dockerfile: "Dockerfile"
+            tags: "latest"
+            platforms: "linux/amd64"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Image
+        if: github.event_name == 'push' || github.event.inputs.dockerfile == matrix.dockerfile
+        run: |
+          docker build --platform ${{ matrix.platforms }} -f docker/${{ matrix.dockerfile }} -t ultralytics/ultralytics:${{ matrix.tags }} .
+
+      - name: Run Tests
+        if: (github.event_name == 'push' || github.event.inputs.dockerfile == matrix.dockerfile) && matrix.platforms == 'linux/amd64'  # arm64 images not supported on GitHub CI runners
+        run: |
+          docker run ultralytics/ultralytics:${{ matrix.tags }} /bin/bash -c "pip install pytest && pytest tests"
+
+      - name: Run Benchmarks
+        # WARNING: Dockerfile (GPU) error on TF.js export 'module 'numpy' has no attribute 'object'.
+        if: (github.event_name == 'push' || github.event.inputs.dockerfile == matrix.dockerfile) && matrix.platforms == 'linux/amd64' && matrix.dockerfile != 'Dockerfile'  # arm64 images not supported on GitHub CI runners
+        run: |
+          docker run ultralytics/ultralytics:${{ matrix.tags }} yolo benchmark model=yolov8n.pt imgsz=160 verbose=0.26
+
+      - name: Push Image
+        if: github.event_name == 'push' || (github.event.inputs.dockerfile == matrix.dockerfile && github.event.inputs.push == true)
+        run: |
+          docker push ultralytics/ultralytics:${{ matrix.tags }}
+
+      - name: Notify on failure
+        if: github.event_name == 'push' && (cancelled() || failure())
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {"text": "<!channel> GitHub Actions error for ${{ github.workflow }} ❌\n\n\n*Repository:* https://github.com/${{ github.repository }}\n*Action:* https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n*Author:* ${{ github.actor }}\n*Event:* ${{ github.event_name }}\n"}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_YOLO }}
