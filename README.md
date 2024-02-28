@@ -4,8 +4,7 @@
       <img width="100%" src="https://raw.githubusercontent.com/ultralytics/assets/main/yolov8/banner-yolov8.png"></a>
   </p>
 [English](README.md) | [简体中文](README.zh-CN.md)
-  YOLOv8-QR is a cutting-edge, state-of-the-art (SOTA) QR code defect detection model that builds on the success of previous YOLO versions and introduces new features and improvements to further improve performance and flexibility. YOLOv8-QR is designed to be fast, accurate, and easy to use, making it an excellent choice for QR code defect detection tasks. In the future, we will optimize and improve the model to achieve the ability to split everything like the SAM in the segmentation task, thank you for reading.
-
+YOLOv8-QR is a cutting-edge, state-of-the-art (SOTA) QR code defect detection model that builds on the success of previous YOLO versions and introduces new features and improvements to further improve performance and flexibility. YOLOv8-QR is designed to be fast, accurate, and easy to use, making it an excellent choice for QR code defect detection tasks. In the future, we will optimize and improve the model to achieve the ability to segmentation task like the segmentation model SAM, but in the test task, what we want to achieve is the ability to detect everything, thank you for reading.
 ## <div align="center">Documentation</div>
 
 See below for a quickstart installation and usage example, and see the [YOLOv8 Docs](https://docs.ultralytics.com) for full documentation on training, validation, prediction and deployment.
@@ -22,8 +21,6 @@ pip install ultralytics
 ```
 
 For alternative installation methods including Conda, Docker, and Git, please refer to the [Quickstart Guide](https://docs.ultralytics.com/quickstart).
-
-
 
 
 </div>
